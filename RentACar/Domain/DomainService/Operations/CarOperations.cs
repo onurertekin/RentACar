@@ -13,7 +13,7 @@ namespace DomainService.Operations
             this.mainDbContext = mainDbContext;
         }
 
-        public IList<Car> Search(string? brand, string? model, DateTime? year, string? rentalPrice, string? fuelType, string? transmissionType)
+        public IList<Car> Search(string? brand, string? model, string? year, string? fuelType, string? transmissionType)
         {
             var query = mainDbContext.Cars.AsQueryable();
 
@@ -23,11 +23,8 @@ namespace DomainService.Operations
             if (!string.IsNullOrEmpty(model))
                 query = mainDbContext.Cars.Where(x => x.Model == model);
 
-            if (year.HasValue)
+            if (!string.IsNullOrEmpty(year))
                 query = mainDbContext.Cars.Where(x => x.Year == year);
-
-            if (!string.IsNullOrEmpty(rentalPrice))
-                query = mainDbContext.Cars.Where(x => x.RentalPrice == rentalPrice);
 
             if (!string.IsNullOrEmpty(fuelType))
                 query = mainDbContext.Cars.Where(x => x.FuelType == fuelType);
@@ -51,20 +48,20 @@ namespace DomainService.Operations
             return car;
         }
 
-        public void Create(string brand, string model, DateTime year, string rentalPrice, string fuelType, string transmissionType)
+        public void Create(string brand, string model, string year, string fuelType, string transmissionType, int carModelId)
         {
             Car car = new Car();
             car.Brand = brand;
             car.Model = model;
             car.Year = year;
-            car.RentalPrice = rentalPrice;
             car.FuelType = fuelType;
             car.TransmissionType = transmissionType;
+            car.CarModelId = carModelId;
 
             SaveEntity(car);
         }
 
-        public void Update(int id, string brand, string model, DateTime year, string rentalPrice, string fuelType, string transmissionType)
+        public void Update(int id, string brand, string model, string year, string fuelType, string transmissionType, int carModelId)
         {
             #region Validations
 
@@ -77,9 +74,9 @@ namespace DomainService.Operations
             car.Brand = brand;
             car.Model = model;
             car.Year = year;
-            car.RentalPrice = rentalPrice;
             car.FuelType = fuelType;
             car.TransmissionType = transmissionType;
+            car.CarModelId = carModelId;
 
             UpdateEntity(car);
         }
