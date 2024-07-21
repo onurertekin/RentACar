@@ -49,6 +49,7 @@ namespace RentACar
             #region Registirations
 
             builder.Services.AddTransient<AuthenticationOperations>();
+            builder.Services.AddTransient<CarOperations>();
 
             #endregion
 
