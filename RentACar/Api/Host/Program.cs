@@ -52,6 +52,7 @@ namespace RentACar
             builder.Services.AddTransient<CarOperations>();
             builder.Services.AddTransient<RezervationOperations>();
             builder.Services.AddTransient<CarModelOperations>();
+            builder.Services.AddTransient<UserOperations>();
 
             #endregion
 
