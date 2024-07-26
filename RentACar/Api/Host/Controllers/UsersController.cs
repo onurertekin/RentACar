@@ -18,7 +18,7 @@ namespace Host.Controllers
         [HttpGet]
         public ActionResult<SearchUsersResponse> Search([FromQuery] SearchUsersRequest request)
         {
-            var users = userOperations.Search(request.userName, request.password);
+            var users = userOperations.Search(request.userName);
 
             var response = new SearchUsersResponse();
             foreach (var user in users)
@@ -26,7 +26,6 @@ namespace Host.Controllers
                 response.users.Add(new SearchUsersResponse.User()
                 {
                     userName = user.UserName,
-                    password = user.Password,
                 });
             }
             return new JsonResult(response);
@@ -40,7 +39,6 @@ namespace Host.Controllers
             var response = new GetSingleUserResponse();
             response.id = id;
             response.userName = user.UserName;
-            response.password = user.Password;
 
             return response;
         }

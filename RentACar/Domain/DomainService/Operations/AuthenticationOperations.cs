@@ -1,6 +1,7 @@
 ﻿using DatabaseModel;
 using DatabaseModel.Entities;
 using DomainService.Exceptions;
+using DomainService.Security;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -22,7 +23,11 @@ namespace DomainService.Operations
 
             var user = mainDbContext.Users.Where(x => x.UserName == userName).FirstOrDefault();
             if (user == null)
-                throw new BusinessException(404, "Kullanıcı bulunamadı.");
+                throw new BusinessException(404, "Kullanıcı adı veya şifre geçersiz");
+
+            var pbdfk2Result = Pbkdf2.Encrypt(password, user.PasswordSalt);
+            if (pbdfk2Result.EncryptedText != user.Password)
+                throw new BusinessException(401, "Kullanıcı adı veya şifre geçersiz");
 
             #endregion
 
@@ -46,5 +51,6 @@ namespace DomainService.Operations
 
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
         }
+
     }
 }

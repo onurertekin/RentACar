@@ -1,4 +1,6 @@
-﻿namespace Contract.Request.Users
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Contract.Request.Users
 {
     public class CreateUserRequest
     {

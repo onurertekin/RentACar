@@ -2,6 +2,7 @@
 using DatabaseModel.Entities;
 using DomainService.Base;
 using DomainService.Exceptions;
+using DomainService.Security;
 
 namespace DomainService.Operations
 {
@@ -13,15 +14,12 @@ namespace DomainService.Operations
             this.mainDbContext = mainDbContext;
         }
 
-        public IList<User> Search(string? userName, string? password)
+        public IList<User> Search(string? userName)
         {
             var query = mainDbContext.Users.AsQueryable();
 
             if (!string.IsNullOrEmpty(userName))
                 query = mainDbContext.Users.Where(x => x.UserName == userName);
-
-            if (!string.IsNullOrEmpty(password))
-                query = mainDbContext.Users.Where(x => x.Password == password);
 
             return query.ToList();
         }
@@ -41,12 +39,16 @@ namespace DomainService.Operations
             if (user != null)
                 throw new BusinessException(409, "Kullanıcı adı mevcut");
 
+            var pbdfk2Result = Pbkdf2.Encrypt(password);
+
             var _user = new User();
             _user.UserName = userName;
-            _user.Password = password;
+            _user.Password = pbdfk2Result.EncryptedText;
+            _user.PasswordSalt = pbdfk2Result.Salt;
 
             SaveEntity(_user);
         }
+
 
         public void Update(int id, string userName, string password)
         {
@@ -55,7 +57,10 @@ namespace DomainService.Operations
                 throw new BusinessException(404, "Kullanıcı bulunamadı.");
 
             user.UserName = userName;
-            user.Password = password;
+
+            var pbdfk2Result = Pbkdf2.Encrypt(password);
+            user.Password = pbdfk2Result.EncryptedText;
+            user.PasswordSalt = pbdfk2Result.Salt;
 
             UpdateEntity(user);
         }
